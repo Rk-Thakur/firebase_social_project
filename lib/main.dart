@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_project/screens/status_check.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,39 @@ class Home extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: StatusCheck(),
+    );
+  }
+}
+
+
+class StreamPage extends StatelessWidget {
+
+
+int n = 0;
+
+  StreamController number =   StreamController<int>();
+
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+          child: StreamBuilder(
+            stream: number.stream,
+            builder: (context, snapshot) {
+              if(snapshot.hasData){
+                return Text('${snapshot.data}', style: TextStyle(fontSize: 50),);
+              }
+              return CircularProgressIndicator();
+            }
+          ),
+        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+         number.sink.add(n++);
+        },
+        child: Text('add'),
+      ),
     );
   }
 }
