@@ -27,13 +27,14 @@ class LoginSignUpProvider{
       final ref = FirebaseStorage.instance.ref().child('userImage/$imageId');
        await ref.putFile(imageFile);
        final url = await ref.getDownloadURL();
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+   final responseUser =  await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email, password: password
       );
       dbUser.add({
         'username': userName,
         'email': email,
         'userImage': url,
+        'userId': responseUser.user!.uid
       });
 
       return 'success';
