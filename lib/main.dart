@@ -35,35 +35,3 @@ class Home extends StatelessWidget {
   }
 }
 
-
-class StreamPage extends StatelessWidget {
-
-
-int n = 0;
-
-  StreamController number =   StreamController<int>();
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-          child: StreamBuilder(
-            stream: number.stream,
-            builder: (context, snapshot) {
-              if(snapshot.hasData){
-                return Text('${snapshot.data}', style: TextStyle(fontSize: 50),);
-              }
-              return CircularProgressIndicator();
-            }
-          ),
-        ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: (){
-         number.sink.add(n++);
-        },
-        child: Text('add'),
-      ),
-    );
-  }
-}
