@@ -22,11 +22,12 @@ class PostProvider{
       final ref = FirebaseStorage.instance.ref().child('postImage/$imageId');
       await ref.putFile(imageFile);
       final url = await ref.getDownloadURL();
-      dbPost.add({
+     await dbPost.add({
         'title': title,
         'detail': 'detail',
         'imageUrl': url,
-        'userId': userId
+        'userId': userId,
+        'imageId': imageId
       });
 
       return 'success';
@@ -52,7 +53,8 @@ class PostProvider{
           id: e.id,
           imageUrl: data['imageUrl'],
           title: data['title'],
-          userId: data['userId']
+          userId: data['userId'],
+        imageId: data['imageId']
       );
     } ).toList();
   }
