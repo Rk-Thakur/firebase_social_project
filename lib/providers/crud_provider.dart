@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_project/models/post.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -45,6 +46,37 @@ class CrudProvider{
 
 
   }
+
+
+  Future<String> removePost({required String postId, required String imageId}) async{
+    try{
+        final ref = FirebaseStorage.instance.ref().child('postImage/$imageId');
+        await ref.delete();
+        await   dbPost.doc(postId).delete();
+      return 'success';
+    }on FirebaseException catch (err) {
+      print(err);
+      return '';
+    }
+
+  }
+
+
+  Future<String> addLike({required String postId, required Like like}) async{
+    try{
+      await   dbPost.doc(postId).update({
+        'likes': like.toJson()
+      });
+      return 'success';
+    }on FirebaseException catch (err) {
+      print(err);
+      return '';
+    }
+
+  }
+
+
+
 
 
 

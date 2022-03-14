@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_project/models/post.dart';
 import 'package:firebase_project/providers/image_provider.dart';
 import 'package:firebase_project/providers/post_provider.dart';
 import 'package:flutter/material.dart';
@@ -81,11 +82,15 @@ class CreatePage extends StatelessWidget {
                                       title: 'please provide an image',
                                       content: Text('image must be select'));
                                 }else{
+                                  Like newLike = Like(
+                                      like: 0,
+                                      username:[]);
                                final response = await   ref.read(postCrudProvider).addPost(
                                    title: titleController.text.trim(),
                                    detail: detailController.text.trim(),
                                    image: db.image!,
-                                   userId: auth
+                                   userId: auth,
+                                 likes: newLike
                                );
                                if(response == 'success'){
                                  Navigator.of(context).pop();

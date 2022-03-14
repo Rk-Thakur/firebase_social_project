@@ -15,7 +15,9 @@ class PostProvider{
 
   CollectionReference dbPost = FirebaseFirestore.instance.collection('posts');
 
-  Future<String> addPost({required String title, required String detail, required XFile image, required String userId}) async{
+  Future<String> addPost({required String title, required String detail, required XFile image,
+    required String userId, required Like
+   likes }) async{
     try{
       final imageFile = File(image.path);
       final imageId = DateTime.now().toString();
@@ -27,7 +29,8 @@ class PostProvider{
         'detail': 'detail',
         'imageUrl': url,
         'userId': userId,
-        'imageId': imageId
+        'imageId': imageId,
+       'likes': likes.toJson()
       });
 
       return 'success';
@@ -54,7 +57,8 @@ class PostProvider{
           imageUrl: data['imageUrl'],
           title: data['title'],
           userId: data['userId'],
-        imageId: data['imageId']
+        imageId: data['imageId'],
+        likes: Like.fromJson(data['likes'])
       );
     } ).toList();
   }

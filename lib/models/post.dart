@@ -5,6 +5,7 @@ class Post {
   late String id;
   late String userId;
   late String imageId;
+  late Like likes;
   Post({
     required this.detail,
     required this.id,
@@ -12,5 +13,32 @@ class Post {
     required this.title,
     required this.userId,
     required this.imageId,
+    required this.likes
   });
+}
+
+
+class Like{
+  late List username;
+  late int like;
+
+  Like({
+   required this.like,
+   required this.username
+});
+
+  Map<String, dynamic> toJson(){
+    return {
+      'username': this.username,
+      'like': this.like
+    };
+  }
+
+  factory Like.fromJson( Map<String, dynamic> json){
+    return Like(
+        like: json['like'],
+        username: json['username']
+    );
+  }
+
 }

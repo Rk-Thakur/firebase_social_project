@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_project/models/post.dart';
 import 'package:firebase_project/providers/auth_provider.dart';
+import 'package:firebase_project/providers/crud_provider.dart';
 import 'package:firebase_project/providers/post_provider.dart';
 import 'package:firebase_project/providers/user_provider.dart';
 import 'package:firebase_project/widgets/create_page.dart';
@@ -14,10 +16,12 @@ class MainScreen extends StatelessWidget {
   final auth = FirebaseAuth.instance.currentUser!.uid;
   @override
   Widget build(BuildContext context) {
+
     return Consumer(
       builder: (context, ref, child) {
         final userData = ref.watch(userProvider);
         final postData = ref.watch(postStream);
+        final currentUser = ref.watch(currentUserProvider);
         return Scaffold(
           drawer: DrawerWidget(),
             appBar: AppBar(
@@ -34,19 +38,20 @@ class MainScreen extends StatelessWidget {
                       'SignOut', style: TextStyle(color: Colors.white),))
               ],
             ),
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                UserPage(userData),
+            body: Column(
+              children: [
+              UserPage(userData),
             postData.when(
-                data: (data){
-                  return ListView.builder(
+              data: (data){
+                return Container(
+                  height: 630,
+                  child: ListView.builder(
                     shrinkWrap: true,
                       itemCount: data.length,
                       itemBuilder: (context, index){
                         return Container(
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                          height: 350,
+                          height:auth != data[index].userId ?  370 : 340,
                             width: double.infinity,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,8 +71,10 @@ class MainScreen extends StatelessWidget {
                                           Navigator.of(context).pop();
                                       Get.to(() => EditPage(data[index]), transition: Transition.leftToRight);
                                         }, child: Icon(Icons.edit)),
-                                        TextButton(onPressed: (){
-
+                                        TextButton(
+                                            onPressed: () async{
+                                          Navigator.of(context).pop();
+                                       await  ref.read(crudProvider).removePost(postId: data[index].id, imageId: data[index].imageId);
                                         }, child: Icon(Icons.delete)),
                                     ]
                                   );
@@ -81,18 +88,43 @@ class MainScreen extends StatelessWidget {
                                     width: double.infinity,
                                     fit: BoxFit.cover,),
                                 ),
+                              if(auth != data[index].userId)  Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Spacer(),
+                                    Text(data[index].likes.like == 0 ? '' :'${data[index].likes.like}'),
+                                    IconButton(
+                                      alignment: Alignment.topCenter,
+                                        onPressed: (){
+                                        if(data[index].likes.username.contains(currentUser.username)){
+                                          Get.showSnackbar(GetSnackBar(
+                                            duration: Duration(seconds: 1),
+
+                                            title: 'you have already like this post',
+                                            message: 'some',
+                                          ));
+                                        }else{
+                                          Like newLike = Like(
+                                              like: data[index].likes.like + 1,
+                                              username: [...data[index].likes.username, currentUser.username]
+                                          );
+                                          ref.read(crudProvider).addLike(postId: data[index].id, like: newLike);
+                                        }
+                                    }, icon: Icon(Icons.thumb_up))
+                                  ],
+                                )
                               ],
                             )
                         );
-                      });
-                },
-                error: (err, stack) => Text('$err'),
-                loading: () => Center(child: CircularProgressIndicator(
-                  color: Colors.purple,
-                ))),
+                      }),
+                );
+              },
+              error: (err, stack) => Text('$err'),
+              loading: () => Center(child: CircularProgressIndicator(
+                color: Colors.purple,
+              ))),
 
-                ],
-              ),
+              ],
             )
         );
       }

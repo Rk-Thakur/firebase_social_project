@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_project/models/user.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
@@ -32,4 +31,17 @@ Future<UserC> getLoginUserData() async {
 
 }
 
+final currentUserProvider = StateNotifierProvider<CurrentUser, UserC>((ref) => CurrentUser());
 
+class CurrentUser extends StateNotifier<UserC>{
+  CurrentUser() : super(UserC(email: '', userImage: '', username: '', userId: '')){
+    getLoginUserData();
+  }
+  final auth = FirebaseAuth.instance.currentUser!.uid;
+
+  Future<void> getLoginUserData() async {
+    CollectionReference dbUser = FirebaseFirestore.instance.collection('users');
+    final response = await dbUser.where('userId', isEqualTo: auth).get();
+     state =  UserC.fromJson(response.docs[0].data() as Map<String, dynamic> );
+  }
+}
