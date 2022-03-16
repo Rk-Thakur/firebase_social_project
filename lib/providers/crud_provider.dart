@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_project/models/comment.dart';
 import 'package:firebase_project/models/post.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -76,6 +77,18 @@ class CrudProvider{
   }
 
 
+  Future<String> addComment({required String postId, required List<Comment> comments}) async{
+    try{
+      await   dbPost.doc(postId).update({
+        'comments': comments.map((e) => e.toJson()).toList()
+      });
+      return 'success';
+    }on FirebaseException catch (err) {
+      print(err);
+      return '';
+    }
+
+  }
 
 
 

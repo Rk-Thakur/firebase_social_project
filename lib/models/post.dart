@@ -1,3 +1,5 @@
+import 'package:firebase_project/models/comment.dart';
+
 class Post {
   late String title;
   late String detail;
@@ -6,6 +8,7 @@ class Post {
   late String userId;
   late String imageId;
   late Like likes;
+  late List<Comment> comments;
   Post({
     required this.detail,
     required this.id,
@@ -13,7 +16,8 @@ class Post {
     required this.title,
     required this.userId,
     required this.imageId,
-    required this.likes
+    required this.likes,
+    required this.comments
   });
 }
 

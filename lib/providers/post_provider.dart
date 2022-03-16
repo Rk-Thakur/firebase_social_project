@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_project/models/comment.dart';
 import 'package:firebase_project/models/post.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +31,8 @@ class PostProvider{
         'imageUrl': url,
         'userId': userId,
         'imageId': imageId,
-       'likes': likes.toJson()
+       'likes': likes.toJson(),
+       'comments':[]
       });
 
       return 'success';
@@ -58,7 +60,8 @@ class PostProvider{
           title: data['title'],
           userId: data['userId'],
         imageId: data['imageId'],
-        likes: Like.fromJson(data['likes'])
+        likes: Like.fromJson(data['likes']),
+        comments: (data['comments'] as List).map((e) => Comment.fromJson(e)).toList()
       );
     } ).toList();
   }

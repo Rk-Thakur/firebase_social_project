@@ -4,6 +4,7 @@ import 'package:firebase_project/providers/auth_provider.dart';
 import 'package:firebase_project/providers/crud_provider.dart';
 import 'package:firebase_project/providers/post_provider.dart';
 import 'package:firebase_project/providers/user_provider.dart';
+import 'package:firebase_project/screens/detail_screen.dart';
 import 'package:firebase_project/widgets/create_page.dart';
 import 'package:firebase_project/widgets/drawer_widget.dart';
 import 'package:firebase_project/widgets/edit_page.dart';
@@ -51,7 +52,7 @@ class MainScreen extends StatelessWidget {
                       itemBuilder: (context, index){
                         return Container(
                           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                          height:auth != data[index].userId ?  370 : 340,
+                          height:auth != data[index].userId ?  370 : 370,
                             width: double.infinity,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,25 +82,29 @@ class MainScreen extends StatelessWidget {
                                     }, icon: Icon(Icons.more_horiz_sharp))
                                   ],
                                 ),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Image.network(data[index].imageUrl,
-                                    height: 270,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,),
+                                InkWell(
+                                  onTap: (){
+                                    Get.to(() => DetailScreen(data[index]), transition: Transition.leftToRight);
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.network(data[index].imageUrl,
+                                      height: 270,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,),
+                                  ),
                                 ),
-                              if(auth != data[index].userId)  Row(
+                              Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     Spacer(),
-                                    Text(data[index].likes.like == 0 ? '' :'${data[index].likes.like}'),
-                                    IconButton(
+                                    Text(data[index].likes.like == 0 ? '' :'Likes ${data[index].likes.like}'),
+                                    if(auth != data[index].userId)    IconButton(
                                       alignment: Alignment.topCenter,
                                         onPressed: (){
                                         if(data[index].likes.username.contains(currentUser.username)){
                                           Get.showSnackbar(GetSnackBar(
                                             duration: Duration(seconds: 1),
-
                                             title: 'you have already like this post',
                                             message: 'some',
                                           ));
