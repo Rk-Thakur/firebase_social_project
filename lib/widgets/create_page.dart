@@ -76,7 +76,7 @@ class CreatePage extends StatelessWidget {
                             child: ElevatedButton(
                               onPressed: ()async {
                                 _form.currentState!.save();
-
+                                FocusScope.of(context).unfocus();
                                 if(db.image == null) {
                                   Get.defaultDialog(
                                       title: 'please provide an image',

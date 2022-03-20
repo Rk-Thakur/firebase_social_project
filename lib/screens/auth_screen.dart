@@ -86,13 +86,14 @@ class AuthScreen extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: ()async {
                               _form.currentState!.save();
+                              FocusScope.of(context).unfocus();
                          if(isLogin){
-                           ref.read(logSignProvider).Login(email: mailController.text.trim(), password: passController.text.trim());
+                         await  ref.read(logSignProvider).Login(email: mailController.text.trim(), password: passController.text.trim());
                          }else{
                              if(db.image == null){
                           Get.defaultDialog(title: 'please provide an image',content: Text('image must be select')  );
                              }else{
-                               ref.read(logSignProvider).signUp(
+                             await  ref.read(logSignProvider).signUp(
                                    userName: userNameController.text.trim(),
                                    email: mailController.text.trim(), password: passController.text.trim(),
                                    image: db.image!

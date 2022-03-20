@@ -12,38 +12,28 @@ final auth = FirebaseAuth.instance.currentUser!.uid;
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final userData = ref.watch(loginUserProvider);
+        final userData = ref.watch(currentUserProvider(auth));
       return Drawer(
-        child: userData.when(data: (data){
-                 return ListView(
-                   children: [
-                     DrawerHeader(
-                       decoration: BoxDecoration(
-                         image: DecorationImage(
-                           fit: BoxFit.cover,
-                           image: NetworkImage(data.userImage),
-                         )
-                       ),
-                         child: Column(
-                           crossAxisAlignment: CrossAxisAlignment.start,
-                           children: [
-                             Text(data.username, style: TextStyle(color: Colors.white),),
-                             SizedBox(height: 90,),
-                             Text(data.email, style: TextStyle(color: Colors.white),),
-                           ],
-                         )
-                     ),
-                   ],
-                 );
-              }, error: (err, stack) => Text('$err'), loading: () => Container(
-                child: Center(
-                  child: CircularProgressIndicator(
-          color: Colors.purple,
-        ),
+        child: userData.email == '' ? Center(child: CircularProgressIndicator(),) : ListView(
+          children: [
+            DrawerHeader(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(userData.userImage),
+                    )
                 ),
-              ))
-
-
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(userData.username, style: TextStyle(color: Colors.white),),
+                    SizedBox(height: 90,),
+                    Text(userData.email, style: TextStyle(color: Colors.white),),
+                  ],
+                )
+            ),
+          ],
+        )
       );
       },
     );

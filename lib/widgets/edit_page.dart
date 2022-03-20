@@ -80,7 +80,7 @@ class EditPage extends StatelessWidget {
                             child: ElevatedButton(
                               onPressed: ()async {
                                 _form.currentState!.save();
-
+                                FocusScope.of(context).unfocus();
                                 if(db.image == null) {
                                   final response = await ref.read(crudProvider).updatePost(
                                       title: titleController.text.trim(),

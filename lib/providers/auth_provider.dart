@@ -22,15 +22,15 @@ class LoginSignUpProvider{
   Future<String> signUp({required String email, required String password, required String userName, required XFile image}) async{
 
     try{
+      final responseUser =  await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email, password: password
+      );
       final imageFile = File(image.path);
       final imageId = DateTime.now().toString();
       final ref = FirebaseStorage.instance.ref().child('userImage/$imageId');
        await ref.putFile(imageFile);
        final url = await ref.getDownloadURL();
-   final responseUser =  await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email, password: password
-      );
-      dbUser.add({
+     await dbUser.add({
         'username': userName,
         'email': email,
         'userImage': url,

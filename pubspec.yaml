@@ -38,10 +38,11 @@ dependencies:
   cloud_firestore: ^3.1.10
   firebase_auth: ^3.3.9
   firebase_storage: ^10.2.9
-  firebase_messaging: ^11.2.8
   flutter_riverpod: ^1.0.3
   get: ^4.6.1
   image_picker: ^0.8.4+10
+  flutter_local_notifications: ^9.4.0
+  firebase_messaging: ^11.2.11
   
 
 dev_dependencies:

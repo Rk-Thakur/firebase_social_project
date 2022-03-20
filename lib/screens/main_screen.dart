@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_project/models/post.dart';
 import 'package:firebase_project/providers/auth_provider.dart';
 import 'package:firebase_project/providers/crud_provider.dart';
@@ -10,11 +11,61 @@ import 'package:firebase_project/widgets/drawer_widget.dart';
 import 'package:firebase_project/widgets/edit_page.dart';
 import 'package:firebase_project/widgets/user_show.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 
-class MainScreen extends StatelessWidget {
+
+
+class MainScreen extends StatefulWidget {
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
   final auth = FirebaseAuth.instance.currentUser!.uid;
+
+
+  AndroidNotificationChannel channel = const AndroidNotificationChannel(
+    'high_importance_channel',
+    'High Importance Notifications',
+    importance: Importance.high,
+  );
+  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+
+  @override
+  void initState() {
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+          notification.hashCode,
+          notification.title,
+          notification.body,
+          NotificationDetails(
+            android: AndroidNotificationDetails(
+              channel.id,
+              channel.name,
+              icon: 'launch_background',
+            ),
+          ),
+        );
+      }
+    });
+
+getToken();
+
+    super.initState();
+  }
+
+  getToken() async{
+   final token =  await FirebaseMessaging.instance.getToken();
+   print(token);
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -22,7 +73,7 @@ class MainScreen extends StatelessWidget {
       builder: (context, ref, child) {
         final userData = ref.watch(userProvider);
         final postData = ref.watch(postStream);
-        final currentUser = ref.watch(currentUserProvider);
+        final currentUser = ref.watch(currentUserProvider(auth));
         return Scaffold(
           drawer: DrawerWidget(),
             appBar: AppBar(
@@ -84,7 +135,7 @@ class MainScreen extends StatelessWidget {
                                 ),
                                 InkWell(
                                   onTap: (){
-                                    Get.to(() => DetailScreen(data[index]), transition: Transition.leftToRight);
+                                    Get.to(() => DetailScreen(data[index], currentUser), transition: Transition.leftToRight);
                                   },
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),

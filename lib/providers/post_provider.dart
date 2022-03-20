@@ -9,8 +9,8 @@ import 'package:image_picker/image_picker.dart';
 
 
 
-final postStream = StreamProvider((ref) => PostProvider().getPosts());
-final postCrudProvider = Provider((ref) => PostProvider());
+final postStream = StreamProvider.autoDispose((ref) => PostProvider().getPosts());
+final postCrudProvider = Provider.autoDispose((ref) => PostProvider());
 
 class PostProvider{
 

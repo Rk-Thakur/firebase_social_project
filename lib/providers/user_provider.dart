@@ -4,7 +4,7 @@ import 'package:firebase_project/models/user.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
-final userProvider = StreamProvider((ref) => UserProvider().getUsers());
+final userProvider = StreamProvider.autoDispose((ref) => UserProvider().getUsers());
 final loginUserProvider = FutureProvider.autoDispose((ref) => UserProvider().getLoginUserData());
 
 
@@ -31,17 +31,17 @@ Future<UserC> getLoginUserData() async {
 
 }
 
-final currentUserProvider = StateNotifierProvider<CurrentUser, UserC>((ref) => CurrentUser());
+final currentUserProvider = StateNotifierProvider.family.autoDispose<CurrentUser, UserC, String>((ref, id) => CurrentUser(uid: id));
 
 class CurrentUser extends StateNotifier<UserC>{
-  CurrentUser() : super(UserC(email: '', userImage: '', username: '', userId: '')){
+  CurrentUser({required this.uid}) : super(UserC(email: '', userImage: '', username: '', userId: '')){
     getLoginUserData();
   }
-  final auth = FirebaseAuth.instance.currentUser!.uid;
+ final String uid;
 
   Future<void> getLoginUserData() async {
     CollectionReference dbUser = FirebaseFirestore.instance.collection('users');
-    final response = await dbUser.where('userId', isEqualTo: auth).get();
+    final response = await dbUser.where('userId', isEqualTo: uid).get();
      state =  UserC.fromJson(response.docs[0].data() as Map<String, dynamic> );
   }
 }
